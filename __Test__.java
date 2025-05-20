@@ -9,9 +9,9 @@ public class __Test__ {
         cp1Lexer lex = new cp1Lexer(new ANTLRFileStream("C:\\Users\\aminnet\\Desktop\\p1\\output\\__Test___input.txt", "UTF8"));
         CommonTokenStream tokens = new CommonTokenStream(lex);
 
-        cp1Parser g = new cp1Parser(tokens, 49100, null);
+        cp1Parser g = new cp1Parser(tokens);
         try {
-            g.prog();
+            g.program();
         } catch (RecognitionException e) {
             e.printStackTrace();
         }
