@@ -1,52 +1,54 @@
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
 import java.io.*;
+import java.nio.file.*;
 
 public class Obfuscator {
 
     public static void main(String[] args) {
         try {
-            // خواندن فایل ورودی
-            ANTLRFileStream input = new ANTLRFileStream("C:\\Users\\aminnet\\Desktop\\p1\\input\\input.mc", "UTF8");
+            String inputPath = "C:\\Users\\aminnet\\Desktop\\p1\\input\\input.mc";
+            String inputCode = Files.readString(Paths.get(inputPath));
 
-            // ساخت Lexer و TokenStream
-            cp1Lexer lexer = new cp1Lexer(input);
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            CommonTree ast = parse(inputCode);
 
-            // ساخت Parser و گرفتن AST
-            cp1Parser parser = new cp1Parser(tokens);
-            cp1Parser.program_return result = parser.program();
-            CommonTree ast = (CommonTree) result.getTree();
+            applyObfuscations(ast);
 
-            // چاپ AST اولیه
-            System.out.println("AST اولیه:");
-            System.out.println(ast.toStringTree());
+            String outputCode = generateCode(ast);
 
-            // اجرای تکنیک تغییر نام متغیرها
-            VariableRenamer renamer = new VariableRenamer();
-            renamer.rename(ast);
+            String outputPath = "C:\\Users\\aminnet\\Desktop\\p1\\output\\output.mc";
+            Files.write(Paths.get(outputPath), outputCode.getBytes());
 
-            // چاپ نگاشت متغیرها
-            renamer.printMappings();
-
-            // چاپ AST نهایی
-            System.out.println("AST نهایی:");
-            System.out.println(ast.toStringTree());
-
-            // ذخیره خروجی به فایل
-            String outputPath = "C:\\Users\\aminnet\\Desktop\\p1\\output\\mc.output";
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
-                writer.write(ast.toStringTree());
-                System.out.println("✅ خروجی در فایل ذخیره شد: " + outputPath);
-            } catch (IOException e) {
-                System.err.println("❌ خطا در نوشتن فایل خروجی:");
-                e.printStackTrace();
-            }
+            System.out.println("✅ مبهم‌سازی با موفقیت انجام شد!");
 
         } catch (Exception e) {
             System.err.println("❌ خطا در اجرای برنامه:");
             e.printStackTrace();
         }
+    }
 
+    private static CommonTree parse(String input) throws Exception {
+        ANTLRStringStream stream = new ANTLRStringStream(input);
+        cp1Lexer lexer = new cp1Lexer(stream);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        cp1Parser parser = new cp1Parser(tokens);
+        return (CommonTree) parser.program().getTree();
+    }
+
+    private static void applyObfuscations(CommonTree ast) {
+        VariableRenamer renamer = new VariableRenamer();
+        renamer.rename(ast);
+        renamer.printMappings();
+
+        DeadCodeInserter deadCodeInserter = new DeadCodeInserter();
+        deadCodeInserter.insertDeadCode(ast);
+
+        ControlFlowFlattener flattener = new ControlFlowFlattener();
+        flattener.flatten(ast);
+    }
+
+    private static String generateCode(CommonTree ast) {
+        CodeGenerator generator = new CodeGenerator();
+        return generator.generate(ast);
     }
 }

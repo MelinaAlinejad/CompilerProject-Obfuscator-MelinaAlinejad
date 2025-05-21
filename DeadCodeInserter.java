@@ -8,7 +8,7 @@ public class DeadCodeInserter {
         insertDeadCode(ast);
     }
 
-    private void insertDeadCode(CommonTree node) {
+    void insertDeadCode(CommonTree node) {
         if (node == null) return;
 
         // تشخیص بلوک‌ها با توکن '{' (کد موجود)
