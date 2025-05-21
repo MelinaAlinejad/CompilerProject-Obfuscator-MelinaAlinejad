@@ -1,10 +1,11 @@
-import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.CommonToken;
+import org.antlr.runtime.tree.CommonTree;
 
 public class ControlFlowFlattener {
     private int labelCounter = 0;
 
-    public void flatten(CommonTree ast) {
+    // تغییر نام متد به flattenControlFlow
+    public void flattenControlFlow(CommonTree ast) {
         processNodes(ast);
     }
 
@@ -22,20 +23,22 @@ public class ControlFlowFlattener {
     }
 
     private boolean isControlStatement(CommonTree node) {
-        return node.getText().equals("if") ||
-                node.getText().equals("while");
+        return node.getText().equals("if") || node.getText().equals("while");
     }
 
     private CommonTree createFlattenedStructure(CommonTree original) {
-        // ساختار switch/goto
-        CommonTree switchNode = new CommonTree(new CommonToken(cp1Lexer.ID, "switch"));
-
-        // ایجاد label
+        CommonTree switchNode = new CommonTree(new CommonToken(0, "switch"));
         String label = "L" + labelCounter++;
 
-        // افزودن ساختار کنترل
-        switchNode.addChild(new CommonTree(new CommonToken(cp1Lexer.ID, label)));
-        switchNode.addChild(original);
+        CommonTree whileLoop = new CommonTree(new CommonToken(0, "while"));
+        whileLoop.addChild(new CommonTree(new CommonToken(0, "1")));
+
+        CommonTree case1 = new CommonTree(new CommonToken(0, "case"));
+        case1.addChild(new CommonTree(new CommonToken(0, "1")));
+        case1.addChild(original);
+
+        switchNode.addChild(whileLoop);
+        switchNode.addChild(case1);
 
         return switchNode;
     }

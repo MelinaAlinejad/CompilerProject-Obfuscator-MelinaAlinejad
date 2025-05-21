@@ -4,23 +4,19 @@ import java.io.*;
 import java.nio.file.*;
 
 public class Obfuscator {
-
     public static void main(String[] args) {
         try {
             String inputPath = "C:\\Users\\aminnet\\Desktop\\p1\\input\\input.mc";
             String inputCode = Files.readString(Paths.get(inputPath));
 
             CommonTree ast = parse(inputCode);
-
             applyObfuscations(ast);
 
             String outputCode = generateCode(ast);
-
             String outputPath = "C:\\Users\\aminnet\\Desktop\\p1\\output\\output.mc";
             Files.write(Paths.get(outputPath), outputCode.getBytes());
 
             System.out.println("✅ مبهم‌سازی با موفقیت انجام شد!");
-
         } catch (Exception e) {
             System.err.println("❌ خطا در اجرای برنامه:");
             e.printStackTrace();
@@ -41,10 +37,10 @@ public class Obfuscator {
         renamer.printMappings();
 
         DeadCodeInserter deadCodeInserter = new DeadCodeInserter();
-        deadCodeInserter.insertDeadCode(ast);
+        deadCodeInserter.insert(ast); // فراخوانی صحیح متد insert
 
         ControlFlowFlattener flattener = new ControlFlowFlattener();
-        flattener.flatten(ast);
+        flattener.flattenControlFlow(ast); // فراخوانی صحیح متد flattenControlFlow
     }
 
     private static String generateCode(CommonTree ast) {
