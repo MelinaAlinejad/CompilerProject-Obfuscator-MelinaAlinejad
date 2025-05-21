@@ -47,5 +47,6 @@ public class Obfuscator {
             System.err.println("❌ خطا در اجرای برنامه:");
             e.printStackTrace();
         }
+
     }
 }
