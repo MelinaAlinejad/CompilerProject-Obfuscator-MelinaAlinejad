@@ -14,5 +14,4 @@
 
 ## نحوه اجرا
 1. کامپایل پروژه:
-```bash
-javac -cp antlr-4.9.2-complete.jar *.java
+
